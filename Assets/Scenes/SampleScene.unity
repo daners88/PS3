@@ -325,9 +325,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tilePrefab: {fileID: 1078765405002880636, guid: c1b2a136eff3ac445a9a04b978a8a555,
     type: 3}
-  stepCount: 1000
+  stepCount: 500
   walkCount: 10
-  wanderWalk: 0
+  wanderWalk: 1
 --- !u!4 &1789435743
 Transform:
   m_ObjectHideFlags: 0
