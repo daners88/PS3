@@ -5,30 +5,37 @@ using UnityEngine;
 
 public class QuadTileBoardPCG : MonoBehaviour
 {
-    public GameObject tilePrefab = null;
+    public GameObject cubePrefab = null;
+    public GameObject tileParent = null;
     public GameObject waterPrefab = null;
+    public Material desertMaterial = null;
+    public Material snowMaterial = null;
+    public Material grassMaterial = null;
+    public Material forestMaterial = null;
+
     public int waterBuffer = 5;
     public int stepCount = 10;
     public int walkCount = 1;
     public int seed = 1;
     public bool wanderWalk = false;
+    public bool elevationBased = true;
+    public bool nsBased = false;
     public bool randomSeed = false;
     private float minX = 0, minZ = 0, maxX = 0, maxZ = 0;
-    public GameObject placementCounter;
-    public GameObject timer;
     private UnityEngine.UI.Text counterText;
     private UnityEngine.UI.Text timeElapsed;
     private int indexAtWhichThingsBecomeWater = 0;
+    private int anticipatedCubeCount = 0;
     List<Vector3> directions = new List<Vector3>(){
                 Vector3.forward,
                 Vector3.back,
                 Vector3.right,
                 Vector3.left };
 
+
     private void Start()
     {
-        counterText = placementCounter.GetComponent<UnityEngine.UI.Text>();
-        timeElapsed = timer.GetComponent<UnityEngine.UI.Text>();
+        anticipatedCubeCount = stepCount * walkCount;
     }
 
     IEnumerator LerpObj(Transform target, Vector3 start, Vector3 end, float duration)
@@ -89,7 +96,7 @@ public class QuadTileBoardPCG : MonoBehaviour
     public float SetHeight(System.Random rnd, Vector3 curPoint, Dictionary<IntKey, GameObject> tileDictionary)
     {
         int determinator = rnd.Next(0, 100);
-        if(determinator > 75)
+        if(determinator > 24)
         {
             return curPoint.y;
         }
@@ -123,16 +130,20 @@ public class QuadTileBoardPCG : MonoBehaviour
             }
             if (minY == 5.0f)
             {
-                minY = 0.33f;
+                minY = 0.0f;
             }
             if (maxY == 0.0f)
             {
-                maxY = 4.66f;
+                maxY = 0.66f;
             }
-            if(maxY - minY < .50f)
+            if (maxY - minY < .75f)
             {
-                minY = 0.25f;
-                maxY = 4.75f;
+                minY = maxY - 0.75f;
+                if(minY < 0.0f)
+                {
+                    minY = 0.0f;
+                    maxY = 0.75f;
+                }
             }
 
             float myheight = rnd.Next((int)(minY * 100), (int)(maxY * 100)) / 100.0f;
@@ -144,6 +155,14 @@ public class QuadTileBoardPCG : MonoBehaviour
                 if (maxDif > 1.0)
                 {
                     myheight = maxY - 0.75f;
+                    if(myheight < 0)
+                    {
+                        myheight = 0.0f;
+                    }
+                    else if(myheight > 5)
+                    {
+                        myheight = 5.0f;
+                    }
                 }
             }
             else
@@ -151,11 +170,108 @@ public class QuadTileBoardPCG : MonoBehaviour
                 if (minDif > 1.0)
                 {
                     myheight = minY + 0.75f;
+                    if (myheight < 0)
+                    {
+                        myheight = 0.0f;
+                    }
+                    else if (myheight > 5)
+                    {
+                        myheight = 5.0f;
+                    }
                 }
             }
 
+            //if(myheight > 2.5)
+            //{
+            //    int b = rnd.Next(0, 10);
+            //    if(b > 4)
+            //    {
+            //        myheight = rnd.Next((int)(2.5 * 100), (int)(myheight * 100))/100.0f;
+            //    }
+            //}
+
             return myheight;
         }
+    }
+
+    public float GetScoreFromElevation(float y)
+    {
+        float score = 0.0f;
+
+        if (y > -0.28)
+        {
+            score = 1.0f;
+        }
+        else if (y > -0.48)
+        {
+            score = 0.75f;
+        }
+        else if (y > -0.68)
+        {
+            score = 0.5f;
+        }
+        else if(y > -0.88)
+        {
+            score = 0.25f;
+        }
+
+        return score;
+    }
+
+    public float GetScoreFromNS(float z, System.Random rnd)
+    {
+        float score = 0.0f;
+
+        if(Mathf.Abs(z) > anticipatedCubeCount * .005)
+        {
+            int totesRand = rnd.Next(0, 100);
+            if (totesRand > 95)
+            {
+                score = rnd.Next(0, 40) / 100.0f;
+            }
+            else if (totesRand > 80)
+            {
+                score = rnd.Next(0, 75) / 100.0f;
+            }
+            else if (totesRand > 50)
+            {
+                score = rnd.Next(60, 110) / 100.0f;
+            }
+            else
+            {
+                score = rnd.Next(80, 120) / 100.0f;
+            }
+        }
+        else if (Mathf.Abs(z) > anticipatedCubeCount * .0025)
+        {
+            score = rnd.Next(50, 100) / 100.0f;
+        }
+        else if (Mathf.Abs(z) > anticipatedCubeCount * .0015)
+        {
+            score = rnd.Next(25, 75) / 100.0f;
+        }
+        else if (Mathf.Abs(z) > anticipatedCubeCount * .0005)
+        {
+            score = rnd.Next(25, 50) / 100.0f;
+        }
+        else
+        {
+            int totesRand = rnd.Next(0, 100);
+            if(totesRand >95)
+            {
+                score = rnd.Next(0, 120) / 100.0f;
+            }
+            else if(totesRand > 80)
+            {
+                score = rnd.Next(0, 75) / 100.0f;
+            }
+            else if (totesRand > 50)
+            {
+                score = rnd.Next(0, 40) / 100.0f;
+            }
+        }
+
+        return score;
     }
 
     //use while loop to reach a number of tiles
@@ -199,8 +315,41 @@ public class QuadTileBoardPCG : MonoBehaviour
                 {
                     stepsWithoutPlacing = 0;
                     curPoint.y = SetHeight(rnd, curPoint, tileDictionary);
-                    GameObject tile = Instantiate<GameObject>(tilePrefab, curPoint, Quaternion.identity, transform);
-                    tile.transform.localScale = new Vector3(1, curPoint.y * 2, 1);
+                   
+                    GameObject tile = Instantiate<GameObject>(cubePrefab, curPoint, Quaternion.identity, tileParent.transform);
+                    tile.transform.localScale = new Vector3(1, curPoint.y < 0.5f ? 1 : curPoint.y * 2, 1);
+                    float biomeTemperatureScore = 0.0f;
+                    if(elevationBased && nsBased)
+                    {
+                        biomeTemperatureScore += GetScoreFromElevation(tile.transform.localPosition.y);
+                        biomeTemperatureScore += GetScoreFromNS(tile.transform.localPosition.z, rnd);
+                    }
+                    else if(nsBased)
+                    {
+                        biomeTemperatureScore += GetScoreFromNS(tile.transform.localPosition.z, rnd);
+                    }
+                    else
+                    {
+                        biomeTemperatureScore += GetScoreFromElevation(tile.transform.localPosition.y);
+                    }
+
+                    if (biomeTemperatureScore >= 1.0)
+                    {
+                        tile.GetComponent<MeshRenderer>().material = snowMaterial;
+                    }
+                    else if (biomeTemperatureScore >= 0.7)
+                    {
+                        tile.GetComponent<MeshRenderer>().material = forestMaterial;
+                    }
+                    else if (biomeTemperatureScore >= 0.4)
+                    {
+                        tile.GetComponent<MeshRenderer>().material = grassMaterial;
+                    }
+                    else
+                    {
+                        tile.GetComponent<MeshRenderer>().material = desertMaterial;
+                    }
+                    //tile.transform.localPosition = curPoint;
                     tiles.Add(tile);
                     tileDictionary.Add(new IntKey((int)curPoint.x, (int)curPoint.z), tile);
                     placed++;
@@ -251,12 +400,14 @@ public class QuadTileBoardPCG : MonoBehaviour
             {
                 if(i < minX || i > maxX || j < minZ || j > maxZ)
                 {
-                    GameObject water = Instantiate<GameObject>(waterPrefab, new Vector3(i, 0, j), Quaternion.identity, transform);
+                    GameObject water = Instantiate<GameObject>(waterPrefab, new Vector3(i, 0, j), Quaternion.identity, tileParent.transform);
+                    //water.transform.localPosition = new Vector3(i, 0, j);
                     FullMap.Add(water);
                 }
                 else if (!tileDictionary.ContainsKey(new IntKey(i, j)))
                 {
-                    GameObject water = Instantiate<GameObject>(waterPrefab, new Vector3(i, 0, j), Quaternion.identity, transform);
+                    GameObject water = Instantiate<GameObject>(waterPrefab, new Vector3(i, 0, j), Quaternion.identity, tileParent.transform);
+                    //water.transform.localPosition = new Vector3(i, 0, j);
                     FullMap.Add(water);
                 }
                 //time += Time.deltaTime;

@@ -6,7 +6,7 @@ using UnityEditor;
 [CustomEditor(typeof(QuadTileBoardPCG))]
 public class QuadTileBoardPCGInspector : Editor
 {
-    static IEnumerator thingy = null;
+    static IEnumerator PCGEnumertor = null;
     private void OnEnable()
     {
         EditorApplication.update += InEditorGenerate;
@@ -17,16 +17,19 @@ public class QuadTileBoardPCGInspector : Editor
         QuadTileBoardPCG pcg = target as QuadTileBoardPCG;
         if(GUILayout.Button("Clear"))
         {
-            for(int i = pcg.transform.childCount - 1; i >= 0; i--)
+            for(int i = pcg.tileParent.transform.childCount - 1; i >= 0; i--)
             {
-                DestroyImmediate(pcg.transform.GetChild(i).gameObject);
+                DestroyImmediate(pcg.tileParent.transform.GetChild(i).gameObject);
             }
         }
 
-        pcg.tilePrefab = EditorGUILayout.ObjectField("Tile Prefab", pcg.tilePrefab, typeof(GameObject), true) as GameObject;
+        pcg.tileParent = EditorGUILayout.ObjectField("Tile Parent", pcg.tileParent, typeof(GameObject), true) as GameObject;
+        pcg.cubePrefab = EditorGUILayout.ObjectField("Cube Prefab", pcg.cubePrefab, typeof(GameObject), true) as GameObject;
         pcg.waterPrefab = EditorGUILayout.ObjectField("Water Prefab", pcg.waterPrefab, typeof(GameObject), true) as GameObject;
-        pcg.placementCounter = EditorGUILayout.ObjectField("Placement Count UI Object", pcg.placementCounter, typeof(GameObject), true) as GameObject;
-        pcg.timer = EditorGUILayout.ObjectField("Timer UI Object", pcg.timer, typeof(GameObject), true) as GameObject;
+        pcg.desertMaterial = EditorGUILayout.ObjectField("Desert Material", pcg.desertMaterial, typeof(Material), true) as Material;
+        pcg.grassMaterial = EditorGUILayout.ObjectField("Grass Material", pcg.grassMaterial, typeof(Material), true) as Material;
+        pcg.forestMaterial = EditorGUILayout.ObjectField("Forest Material", pcg.forestMaterial, typeof(Material), true) as Material;
+        pcg.snowMaterial = EditorGUILayout.ObjectField("Snow Material", pcg.snowMaterial, typeof(Material), true) as Material;
         EditorGUILayout.BeginHorizontal();
         pcg.seed = EditorGUILayout.IntField(pcg.seed);
         pcg.stepCount = EditorGUILayout.IntField(pcg.stepCount);
@@ -35,21 +38,23 @@ public class QuadTileBoardPCGInspector : Editor
 
         if (GUILayout.Button("Create Map"))
         {
-            thingy = pcg.DrunkenWalk();
+            PCGEnumertor = pcg.DrunkenWalk();
         }
         EditorGUILayout.EndHorizontal();
 
         pcg.wanderWalk = EditorGUILayout.Toggle("Wander", pcg.wanderWalk);
+        pcg.elevationBased = EditorGUILayout.Toggle("Biomes: Elevation", pcg.elevationBased);
+        pcg.nsBased = EditorGUILayout.Toggle("Biomes: North South", pcg.nsBased);
         base.OnInspectorGUI();
     }
 
     private void InEditorGenerate()
     {
-        if(thingy != null)
+        if(PCGEnumertor != null)
         {
-            if (!thingy.MoveNext())
+            if (!PCGEnumertor.MoveNext())
             {
-                thingy = null;
+                PCGEnumertor = null;
             }
         }
         

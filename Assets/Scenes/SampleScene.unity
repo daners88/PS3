@@ -120,6 +120,36 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &356852288
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 356852289}
+  m_Layer: 0
+  m_Name: TileParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &356852289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 356852288}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -647,18 +677,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e00b2196578f9e243b800394336b65ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilePrefab: {fileID: 1078765405002880636, guid: c1b2a136eff3ac445a9a04b978a8a555,
+  cubePrefab: {fileID: 1078765405002880636, guid: c1b2a136eff3ac445a9a04b978a8a555,
     type: 3}
+  tileParent: {fileID: 356852288}
   waterPrefab: {fileID: 4594367562538203817, guid: 653cf5e562a3ec54d82f0319a546785f,
     type: 3}
+  desertMaterial: {fileID: 2100000, guid: 905d8d58e7141bd4b9b398f8da058339, type: 2}
+  snowMaterial: {fileID: 2100000, guid: 0bd1eb270d5a3d040a2a4cb0674390e5, type: 2}
+  grassMaterial: {fileID: 2100000, guid: af271c8452942c4419113025a39a51a9, type: 2}
+  forestMaterial: {fileID: 2100000, guid: b49263828849a2045821e599628e0ef8, type: 2}
   waterBuffer: 5
   stepCount: 1000
   walkCount: 20
   seed: 71
   wanderWalk: 1
+  elevationBased: 0
+  nsBased: 1
   randomSeed: 0
-  placementCounter: {fileID: 1013735568}
-  timer: {fileID: 1195485789}
 --- !u!4 &1789435743
 Transform:
   m_ObjectHideFlags: 0
