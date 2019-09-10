@@ -19,20 +19,15 @@ public class QuadTileBoardPCGInspector : Editor
         }
 
         pcg.tilePrefab = EditorGUILayout.ObjectField("Tile Prefab", pcg.tilePrefab, typeof(GameObject), true) as GameObject;
+        pcg.placementCounter = EditorGUILayout.ObjectField("Placement Count UI Object", pcg.placementCounter, typeof(GameObject), true) as GameObject;
         EditorGUILayout.BeginHorizontal();
-
+        pcg.seed = EditorGUILayout.IntField(pcg.seed);
         pcg.stepCount = EditorGUILayout.IntField(pcg.stepCount);
         pcg.walkCount = EditorGUILayout.IntField(pcg.walkCount);
 
         if (GUILayout.Button("Create Map"))
         {
-            pcg.StartCoroutine(pcg.DrunkenWalk(pcg, pcg.tilePrefab, Vector3.zero, new List<Vector3>(){
-                Vector3.forward,
-                Vector3.back,
-                Vector3.right,
-                Vector3.left },
-                pcg.stepCount,
-                pcg.walkCount));
+            pcg.DrunkenWalk();
         }
         EditorGUILayout.EndHorizontal();
 
