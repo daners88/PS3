@@ -42,6 +42,78 @@ public class QuadTileBoardPCG : MonoBehaviour
                 Vector3.left }));
     }
 
+    public float SetHeight(System.Random rnd, Vector3 curPoint, List<GameObject> tiles)
+    {
+        int determinator = rnd.Next(0, 100);
+        if(determinator > 60)
+        {
+            return curPoint.y;
+        }
+        else
+        {
+            float minY = 5.0f, maxY = 0.0f;
+            List<GameObject> possibleAdjacents = new List<GameObject>();
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x - 1 && t.transform.position.z == curPoint.z + 1).FirstOrDefault());
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x && t.transform.position.z == curPoint.z + 1).FirstOrDefault());
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x + 1 && t.transform.position.z == curPoint.z + 1).FirstOrDefault());
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x - 1 && t.transform.position.z == curPoint.z).FirstOrDefault());
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x + 1 && t.transform.position.z == curPoint.z).FirstOrDefault());
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x - 1 && t.transform.position.z == curPoint.z - 1).FirstOrDefault());
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x && t.transform.position.z == curPoint.z - 1).FirstOrDefault());
+            possibleAdjacents.Add(tiles.Where(t => t.transform.position.x == curPoint.x + 1 && t.transform.position.z == curPoint.z - 1).FirstOrDefault());
+
+
+            foreach (var adj in possibleAdjacents)
+            {
+                if (adj != null)
+                {
+                    if (adj.transform.position.y < minY)
+                    {
+                        minY = adj.transform.position.y;
+                    }
+                    if (adj.transform.position.y > maxY)
+                    {
+                        maxY = adj.transform.position.y;
+                    }
+                }
+            }
+            if (minY == 5.0f)
+            {
+                minY = 0.33f;
+            }
+            if (maxY == 0.0f)
+            {
+                maxY = 4.66f;
+            }
+            if(maxY - minY < .50f)
+            {
+                minY = 0.25f;
+                maxY = 4.75f;
+            }
+
+            float myheight = rnd.Next((int)(minY * 100), (int)(maxY * 100)) / 100.0f;
+            float minDif = myheight - minY;
+            float maxDif = maxY - myheight;
+
+            if (maxDif > minDif)
+            {
+                if (maxDif > 1.0)
+                {
+                    myheight = maxY - 0.75f;
+                }
+            }
+            else
+            {
+                if (minDif > 1.0)
+                {
+                    myheight = minY + 0.75f;
+                }
+            }
+
+            return myheight;
+        }
+    }
+
     //use while loop to reach a number of tiles
     public IEnumerator DrunkenWalk(Vector3 start, List<Vector3> directions)
     {
@@ -73,37 +145,24 @@ public class QuadTileBoardPCG : MonoBehaviour
 
             for (int i = 0; i < stepCount; i++)
             {
-                //if(curPoint.x < minX || curPoint.x > maxX || curPoint.z < minZ || curPoint.z > minZ)
-                //{
-                //    GameObject tile = Instantiate<GameObject>(tilePrefab, curPoint, Quaternion.identity, transform);
-                //    tiles.Add(tile);
-                //    if(curPoint.x < minX)
-                //    {
-                //        minX = curPoint.x;
-                //    }
-                //    if (curPoint.x > maxX)
-                //    {
-                //        maxX = curPoint.x;
-                //    }
-                //    if (curPoint.z < minZ)
-                //    {
-                //        minZ = curPoint.z;
-                //    }
-                //    if (curPoint.z > minZ)
-                //    {
-                //        maxZ = curPoint.z;
-                //    }
-                //    placed++;
-                //}
-                if(tiles.Where(t => t.transform.position.Equals(curPoint)).FirstOrDefault() == null)
+                int stepsWithoutPlacing = 0;
+                if (tiles.Where(t => t.transform.position.x == curPoint.x && t.transform.position.z == curPoint.z).FirstOrDefault() == null)
                 {
+                    stepsWithoutPlacing = 0;
+                    curPoint.y = SetHeight(rnd, curPoint, tiles);
                     GameObject tile = Instantiate<GameObject>(tilePrefab, curPoint, Quaternion.identity, transform);
+                    tile.transform.localScale = new Vector3(1, curPoint.y * 2, 1);
                     tiles.Add(tile);
                     placed++;
                 }
                 else
                 {
                     i--;
+                    stepsWithoutPlacing++;
+                }
+                if(stepsWithoutPlacing > 15)
+                {
+                    curPoint = tiles[rnd.Next(0, tiles.Count)].transform.position;
                 }
                 int dirIndex = rnd.Next(0, directions.Count);
                 Vector3 dir = directions[dirIndex];
