@@ -45,6 +45,7 @@ public class QuadTileBoardPCGInspector : Editor
         pcg.wanderWalk = EditorGUILayout.Toggle("Wander", pcg.wanderWalk);
         pcg.elevationBased = EditorGUILayout.Toggle("Biomes: Elevation", pcg.elevationBased);
         pcg.nsBased = EditorGUILayout.Toggle("Biomes: North South", pcg.nsBased);
+        pcg.useMoisture = EditorGUILayout.Toggle("Biomes: Moisture", pcg.useMoisture);
         base.OnInspectorGUI();
     }
 

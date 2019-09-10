@@ -21,6 +21,7 @@ public class QuadTileBoardPCG : MonoBehaviour
     public bool elevationBased = true;
     public bool nsBased = false;
     public bool randomSeed = false;
+    public bool useMoisture = false;
     private float minX = 0, minZ = 0, maxX = 0, maxZ = 0;
     private UnityEngine.UI.Text counterText;
     private UnityEngine.UI.Text timeElapsed;
@@ -194,6 +195,12 @@ public class QuadTileBoardPCG : MonoBehaviour
         }
     }
 
+    public float GetMoistureScore(Transform tf)
+    {
+        float score = 0.0f;
+        return score;
+    }
+
     public float GetScoreFromElevation(float y)
     {
         float score = 0.0f;
@@ -318,30 +325,37 @@ public class QuadTileBoardPCG : MonoBehaviour
                    
                     GameObject tile = Instantiate<GameObject>(cubePrefab, curPoint, Quaternion.identity, tileParent.transform);
                     tile.transform.localScale = new Vector3(1, curPoint.y < 0.5f ? 1 : curPoint.y * 2, 1);
-                    float biomeTemperatureScore = 0.0f;
+                    float biomeScore = 0.0f, temperatureScore = 0.0f, moistureScore = 0.0f; ;
                     if(elevationBased && nsBased)
                     {
-                        biomeTemperatureScore += GetScoreFromElevation(tile.transform.localPosition.y);
-                        biomeTemperatureScore += GetScoreFromNS(tile.transform.localPosition.z, rnd);
+                        temperatureScore += GetScoreFromElevation(tile.transform.localPosition.y);
+                        temperatureScore += GetScoreFromNS(tile.transform.localPosition.z, rnd);
                     }
                     else if(nsBased)
                     {
-                        biomeTemperatureScore += GetScoreFromNS(tile.transform.localPosition.z, rnd);
+                        temperatureScore += GetScoreFromNS(tile.transform.localPosition.z, rnd);
                     }
                     else
                     {
-                        biomeTemperatureScore += GetScoreFromElevation(tile.transform.localPosition.y);
+                        temperatureScore += GetScoreFromElevation(tile.transform.localPosition.y);
                     }
 
-                    if (biomeTemperatureScore >= 1.0)
+                    //if(useMoisture)
+                    //{
+                    //    moistureScore = GetMoistureScore(tile.transform);
+                    //}
+
+                    biomeScore = temperatureScore; // + moistureScore;
+
+                    if (biomeScore >= 1.0)
                     {
                         tile.GetComponent<MeshRenderer>().material = snowMaterial;
                     }
-                    else if (biomeTemperatureScore >= 0.7)
+                    else if (biomeScore >= 0.7)
                     {
                         tile.GetComponent<MeshRenderer>().material = forestMaterial;
                     }
-                    else if (biomeTemperatureScore >= 0.4)
+                    else if (biomeScore >= 0.4)
                     {
                         tile.GetComponent<MeshRenderer>().material = grassMaterial;
                     }
@@ -415,6 +429,11 @@ public class QuadTileBoardPCG : MonoBehaviour
                 
             }
             yield return null;
+        }
+
+        if(useMoisture)
+        {
+
         }
 
     }

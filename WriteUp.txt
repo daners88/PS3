@@ -1,0 +1,15 @@
+Favorite Screenshots:
+SS1- This is using solely elevation for biome determinations, I just thought it was cool how it reached across the screen.
+We could replicate something like this by having directions weighted and guiding it in a certain direction rather than allowing it free roaming.
+
+SS2- This is using solely North/South of the equator for biome determinations. I thought it looked like Africa if it was flooded in the south. The desert even
+lined up with roughly the Sahara desert. This could be replicated via learning algorithms examining real world maps and adding twists or melting the north pole.
+
+SS3- This is using both elevation and an equator to determine biomes. I liked this one reaching down as well, but liked mostly how it favored the South and made the
+equator off center. This can be replicated using the same logic as with screen shot 1, but then setting the equator to be off center to begin with.
+
+I wasn't terribly pleased with my height randomization, I think that a few extra passes could smooth it out but would result in alot more time spent on a loading screen.
+I managed to get a temperature score, which is what I use in determining biomes. It is partially randomized, which is why some super south locations can still be a forest
+or some other biome amidst the snow.
+
+I'm looking forward to learning more about PCG, despite my project having some short comings, it was fun to work on.
